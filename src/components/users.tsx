@@ -1,4 +1,4 @@
-import { List, Datagrid, TextField, EmailField, SimpleList, UrlField } from "react-admin";
+import { List, Datagrid, TextField, EmailField, SimpleList } from "react-admin";
 import { useMediaQuery, Theme } from "@mui/material";
 import MyUrlField from "./MyUrlField";
 
