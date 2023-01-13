@@ -27,8 +27,6 @@ export const dataProvider= {
 		
 		return httpClient(url).then(({ json }) => {
 			const data = json.data.results;
-			const total = json.data.total;
-			const hasNextPage = json.data.total > page * perPage
 			// const formattedObject = data.map((res: any) => {
 			// 	const dates = res.dates;
 			// 	const formattedDate = dates.map((res: any) => {
@@ -56,12 +54,13 @@ export const dataProvider= {
 				total: 100
 			};
 		});
-},
+	},
 
 	getOne: (resource: string, params:{id: number}) =>
-		httpClient(`${apiUrl}/${resource}/${params.id}`).then(({ json }) => ({
-			data: json,
-		})),
+		httpClient(`${apiUrl}/${resource}/${params.id}?ts=1672772021&apikey=5936603c02d99748b94c0bc54d9b504c&hash=816f5c1f3b8dea819c4a72157c186cea&`).then(({ json }) => ({
+			data: Object.assign({}, ...json.data.results),
+		})
+	),
 
 	getMany: (resource: string, params: GetManyParams) => {
 		const query = {
