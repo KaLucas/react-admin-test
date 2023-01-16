@@ -9,7 +9,7 @@ import { dataProvider } from "./providers/dataProvider";
 
 const App = () => (
   <Admin authProvider={authProvider} dataProvider={dataProvider} dashboard={Dashboard}>
-    <Resource name="characters" list={CharactersList} icon={PostIcon} />
+    <Resource name="characters" options={{ label:"Personagens da Marvel" }} list={CharactersList} icon={PostIcon} />
     <Resource name="users" list={UserList} icon={UserIcon} recordRepresentation="name" />
   </Admin>
 );
