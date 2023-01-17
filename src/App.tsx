@@ -1,16 +1,19 @@
-import { Admin, Resource } from "react-admin";
+import { Admin, CustomRoutes, Resource } from "react-admin";
 import { UserList } from "./components/users";
 import { CharactersList } from "./components/characters";
 import PostIcon from "@mui/icons-material/Book";
-import UserIcon from "@mui/icons-material/Group";
 import { Dashboard } from "./components/Dashboard";
 import { authProvider } from "./providers/authProvider";
 import { dataProvider } from "./providers/dataProvider";
+import { Route } from 'react-router-dom'
+import { CustomLayout } from "./layout/custom-layout";
 
 const App = () => (
-  <Admin authProvider={authProvider} dataProvider={dataProvider} dashboard={Dashboard}>
-    <Resource name="characters" options={{ label:"Personagens da Marvel" }} list={CharactersList} icon={PostIcon} />
-    <Resource name="users" list={UserList} icon={UserIcon} recordRepresentation="name" />
+  <Admin authProvider={authProvider} dataProvider={dataProvider} dashboard={Dashboard} layout={CustomLayout}>
+    <Resource name="characters" list={CharactersList} icon={PostIcon} />
+    <Route path="/users" element={<UserList />} />,
+    <CustomRoutes>
+    </CustomRoutes>
   </Admin>
 );
 
