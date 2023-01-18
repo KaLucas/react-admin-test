@@ -3,15 +3,15 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 export const UsersApi = createApi({
   reducerPath: 'usersApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'https://gorest.co.in/public/v2/users'
+    baseUrl: 'https://gorest.co.in/public/v2'
   }),
   tagTypes: ['Users'],
-  endpoints: (builder) => ({
-    getUsers: builder.query({
+  endpoints: (build) => ({
+    getUsers: build.query({
       query: () => '/users',
       providesTags: ['Users']
     }),
-    editUsers: builder.mutation({
+    editUsers: build.mutation({
       query: ({id, ...body}) => ({
         url: `/users/${id}`,
         method: 'PUT',
