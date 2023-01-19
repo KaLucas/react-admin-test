@@ -1,10 +1,11 @@
-import { IconButton, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper } from "@mui/material";
+import { IconButton, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper, List, ListItem, Button } from "@mui/material";
 import { useGetUsersQuery } from "../../providers/usersApi";
 import { Delete, Edit, Add } from '@mui/icons-material';
-import React from "react";
+import { ReactElement, useState } from "react";
 import { DialogEdit } from "../dialogs/dialog-edit";
+import { DialogDelete } from "../dialogs/dialog-delete";
 
-interface Users {
+export interface Users {
   id: number;
   name: string;
   email: string;
@@ -12,20 +13,26 @@ interface Users {
   status: string;
 }
 
-export const UserList = () => {
+export const UserList = (): ReactElement => {
   const { data: users = [] } = useGetUsersQuery(undefined, {refetchOnMountOrArgChange: true});
-  const [ anchorEl, setAnchorEl ] = React.useState(null);
-  const [ openDialogName, setOpenDialog ] = React.useState(null) as any;
+  const [openEdit, setOpenEdit] = useState(false);    
+  const [openDelete, setOpenDelete] = useState(false);
+  const [userId, setUserId] = useState() as any;
 
-  const openEditDialog = () => {
-    setOpenDialog('EDIT');
-    handleClose();
+  const handleEditOpen = (userId: number) => (e: any) => {
+    setOpenEdit(true);
+    setUserId(userId);
+  };
+  const handleDeleteOpen = () => {
+    setOpenDelete(true);
+  };
+  const handleEditClose = () => {
+    setOpenEdit(false);
   };
 
-  const handleClose = () => {
-    setOpenDialog(null);
+  const handleDeleteClose = () => {
+    setOpenDelete(false);
   };
-
 
   return (
     <>
@@ -41,29 +48,30 @@ export const UserList = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {users.map((user: Users) => (
-              <TableRow key={user.name} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                <TableCell component="th" scope="row">{user.name}</TableCell>
-                <TableCell>{user.email}</TableCell>
-                <TableCell>{user.gender}</TableCell>
-                <TableCell>{user.status}</TableCell>
-                <TableCell align="center">
-                <IconButton aria-label="add">
-                  <Add />
-                </IconButton>
-                <IconButton aria-label="edit" onClick={openEditDialog}>
-                  <Edit />
-                </IconButton>
-                <IconButton aria-label="delete">
-                  <Delete />
-                </IconButton>
-                </TableCell>
-              </TableRow>
-            ))}
+          {users.map((user: Users) => (
+            <TableRow key={user.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+              <TableCell component="th" scope="row">{user.name}</TableCell>
+              <TableCell>{user.email}</TableCell>
+              <TableCell>{user.gender}</TableCell>
+              <TableCell>{user.status}</TableCell>
+              <TableCell align="center">
+              <IconButton aria-label="add">
+                <Add />
+              </IconButton>
+              <IconButton aria-label="edit" onClick={handleEditOpen(user.id)}>
+                <Edit />
+              </IconButton>
+              <IconButton aria-label="delete">
+                <Delete />
+              </IconButton>
+              </TableCell>
+            </TableRow>
+          ))}
           </TableBody>
         </Table>
       </TableContainer>
-      <DialogEdit open={openDialogName === 'EDIT'} onClose={handleClose}/>
+      <DialogEdit open={openEdit} handleClose={handleEditClose}/>
+      <DialogDelete open={openDelete} handleClose={handleDeleteClose} />
     </>
   );
 };
