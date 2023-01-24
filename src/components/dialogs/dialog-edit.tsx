@@ -1,36 +1,98 @@
-import { Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Button } from "@mui/material";
-import { useRecordContext } from "react-admin";
-import { useDispatch, useSelector } from "react-redux";
-import { useEditUsersMutation } from "../../providers/usersApi";
-import { Users } from "../users/users";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  TextField,
+  InputLabel,
+  NativeSelect,
+  Box
+} from "@mui/material";
 import { useState } from "react";
+import { useEditUsersMutation, useGetUserQuery } from "../../providers/usersApi";
 
-interface Props {
-  record?: Users;
-  open: any;
-  handleClose: () => void;
-}
-
-export const DialogEdit = (props: Props) => {
-  const { open, handleClose, record } = props;
-  console.log(record);
+export const DialogEdit = (record: any) => {
+  const {data} = useGetUserQuery(record.user);
   
+  const [editUsers] = useEditUsersMutation();
+
+  // const handleInputChange = (e: any) => {
+  //   let { name, value } = e.target;
+  //   setFormValue({...formValue, [name]: value});
+  // }
+
+  // const handleSubmit = async (e: any) => {
+  //   e.preventDefault();
+  //   await editUsers(formValue);
+  //   handleClose();
+  // }
   
   return (
-    <div>
-      <Dialog open={open} onClose={handleClose}>
-      <DialogTitle>Edit</DialogTitle>
-      <DialogContent>
-        <DialogContentText>
-          To subscribe to this website, please enter your email address here. We
-          will send updates occasionally.
-        </DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleClose}>Cancel</Button>
-        <Button onClick={handleClose}>Subscribe</Button>
-      </DialogActions>
-    </Dialog>
-    </div>
+    <>
+      <Dialog open={record.open} onClose={record.handleClose}>
+        {data?.id ? (
+          <>
+            <DialogTitle>Edit</DialogTitle>
+            <DialogContent>
+              <TextField
+                label="ID"
+                fullWidth
+                value={data.id}
+                InputProps={{
+                  readOnly: true,
+                }}
+                />
+              <TextField
+                label="Name"
+                size="medium"
+                fullWidth
+                defaultValue={data.name}
+              />
+              <TextField
+                label="E-mail"
+                fullWidth
+                defaultValue={data.email}
+              />
+              <Box display="flex" gap="50px" marginTop="20px">
+                <Box>
+                  <InputLabel>Gender</InputLabel>
+                  <NativeSelect
+                    defaultValue={data.gender}
+                    inputProps={{
+                      name: 'gender'
+                    }}
+                  >
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                  </NativeSelect>
+                </Box>
+                <Box>
+                  <InputLabel>Status</InputLabel>
+                  <NativeSelect
+                    defaultValue={data.status}
+                    inputProps={{
+                      name: 'status'
+                    }}
+                  >
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                  </NativeSelect>
+                </Box>
+              </Box>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={record.handleClose}>Cancel</Button>
+              <Button>Save</Button>
+            </DialogActions>
+          </>
+        ) : (
+          <>
+            <DialogTitle>Loading...</DialogTitle>
+          </>
+        )
+        }
+      </Dialog>
+    </>
   )
 }

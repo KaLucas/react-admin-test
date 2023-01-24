@@ -1,7 +1,7 @@
-import { IconButton, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper, List, ListItem, Button } from "@mui/material";
-import { useGetUsersQuery } from "../../providers/usersApi";
+import { IconButton, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper } from "@mui/material";
+import { useEditUsersMutation, useGetUsersQuery } from "../../providers/usersApi";
 import { Delete, Edit, Add } from '@mui/icons-material';
-import { ReactElement, useState } from "react";
+import { useState } from "react";
 import { DialogEdit } from "../dialogs/dialog-edit";
 import { DialogDelete } from "../dialogs/dialog-delete";
 
@@ -13,26 +13,32 @@ export interface Users {
   status: string;
 }
 
-export const UserList = (): ReactElement => {
-  const { data: users = [] } = useGetUsersQuery(undefined, {refetchOnMountOrArgChange: true});
+export const UserList = () => {
+  const { data: users = [], isLoading } = useGetUsersQuery(undefined, {refetchOnMountOrArgChange: true});
   const [openEdit, setOpenEdit] = useState(false);    
   const [openDelete, setOpenDelete] = useState(false);
   const [userId, setUserId] = useState() as any;
+  
+  if (isLoading) {
+    return <h3>Loading...</h3>
+  }
 
-  const handleEditOpen = (userId: number) => (e: any) => {
+  const handleEditOpen = (userId: any) => (e: any) => {
     setOpenEdit(true);
     setUserId(userId);
   };
-  const handleDeleteOpen = () => {
-    setOpenDelete(true);
-  };
+
   const handleEditClose = () => {
     setOpenEdit(false);
+    setUserId('');
   };
+  // const handleDeleteOpen = () => {
+  //   setOpenDelete(true);
+  // };
 
-  const handleDeleteClose = () => {
-    setOpenDelete(false);
-  };
+  // const handleDeleteClose = () => {
+  //   setOpenDelete(false);
+  // };
 
   return (
     <>
@@ -70,8 +76,8 @@ export const UserList = (): ReactElement => {
           </TableBody>
         </Table>
       </TableContainer>
-      <DialogEdit open={openEdit} handleClose={handleEditClose}/>
-      <DialogDelete open={openDelete} handleClose={handleDeleteClose} />
+      <DialogEdit open={openEdit} user={userId} handleClose={handleEditClose} />
+      {/* <DialogDelete open={openDelete} handleClose={handleDeleteClose} /> */}
     </>
   );
 };
