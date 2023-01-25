@@ -1,24 +1,30 @@
 import { IconButton, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper } from "@mui/material";
-import { useEditUsersMutation, useGetUsersQuery } from "../../providers/usersApi";
+import { useGetUsersQuery } from "../../providers/usersApi";
 import { Delete, Edit, Add } from '@mui/icons-material';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DialogEdit } from "../dialogs/dialog-edit";
 import { DialogDelete } from "../dialogs/dialog-delete";
 
 export interface Users {
   id: number;
   name: string;
+  username: string;
   email: string;
-  gender: string;
-  status: string;
+  address: {
+    street: string;
+  };
+  phone: string;
 }
 
 export const UserList = () => {
   const { data: users = [], isLoading } = useGetUsersQuery(undefined, {refetchOnMountOrArgChange: true});
+  console.log(users);
+  
+  const [page, setPage] = useState(1)
   const [openEdit, setOpenEdit] = useState(false);    
   const [openDelete, setOpenDelete] = useState(false);
   const [userId, setUserId] = useState() as any;
-  
+
   if (isLoading) {
     return <h3>Loading...</h3>
   }
@@ -47,9 +53,9 @@ export const UserList = () => {
           <TableHead>
             <TableRow>
               <TableCell>Name</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Gender</TableCell>
-              <TableCell>Status</TableCell>
+              <TableCell>Username</TableCell>
+              <TableCell>E-mail</TableCell>
+              <TableCell>Phone</TableCell>
               <TableCell align="center">Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -57,9 +63,9 @@ export const UserList = () => {
           {users.map((user: Users) => (
             <TableRow key={user.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
               <TableCell component="th" scope="row">{user.name}</TableCell>
+              <TableCell>{user.username}</TableCell>
               <TableCell>{user.email}</TableCell>
-              <TableCell>{user.gender}</TableCell>
-              <TableCell>{user.status}</TableCell>
+              <TableCell>{user.phone}</TableCell>
               <TableCell align="center">
               <IconButton aria-label="add">
                 <Add />

@@ -4,95 +4,113 @@ import {
   DialogContent,
   DialogActions,
   Button,
-  TextField,
-  InputLabel,
-  NativeSelect,
-  Box
+  TextField
 } from "@mui/material";
-import { useState } from "react";
-import { useEditUsersMutation, useGetUserQuery } from "../../providers/usersApi";
+import { useEffect, useState } from "react";
+import { Form } from "react-admin";
+import { useUpdateUserMutation, useGetUserQuery, useAddUserMutation } from "../../providers/usersApi";
+
+const initialState = {
+  id: 0,
+  name: '',
+  username: '',
+  email: '',
+  address: {
+    street: '',
+  },
+  phone: ''
+};
 
 export const DialogEdit = (record: any) => {
-  const {data} = useGetUserQuery(record.user);
-  
-  const [editUsers] = useEditUsersMutation();
+  const { data } = useGetUserQuery(record.user);
+  const id = data?.id;
+  const [editMode, setEditMode] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false); 
+  const [formValue, setFormValue] = useState(initialState);
+  const [updateUser] = useUpdateUserMutation();
+  const [addUser] = useAddUserMutation();
 
-  // const handleInputChange = (e: any) => {
-  //   let { name, value } = e.target;
-  //   setFormValue({...formValue, [name]: value});
-  // }
+  useEffect(() => {
+    if (id) {
+      setEditMode(true);
+      if (data) {
+        setFormValue({...data});
+      }
+    } else {
+      setEditMode(false);
+      setFormValue({...initialState});
+    }
+  }, [id, data]);
 
-  // const handleSubmit = async (e: any) => {
-  //   e.preventDefault();
-  //   await editUsers(formValue);
-  //   handleClose();
-  // }
+  const handleInputChange = (e: any) => {
+    let { name, value } = e.target;
+    setFormValue({...formValue, [name]: value});
+  }
+
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    if (!editMode) {
+      await addUser(formValue);
+      handleClose();
+    } else {
+      await updateUser(formValue);
+      handleClose();
+    }
+  }
+
+  const handleClose = () => {
+    setOpenEdit(record.handleClose);
+  };
   
   return (
     <>
-      <Dialog open={record.open} onClose={record.handleClose}>
-        {data?.id ? (
-          <>
-            <DialogTitle>Edit</DialogTitle>
-            <DialogContent>
-              <TextField
-                label="ID"
-                fullWidth
-                value={data.id}
-                InputProps={{
-                  readOnly: true,
-                }}
+      <Form onSubmit={handleSubmit}>
+        <Dialog open={record.open} onClose={record.handleClose}>
+          {data?.id ? (
+            <>
+              <DialogTitle>Edit</DialogTitle>
+              <DialogContent>
+                <TextField
+                  label="ID"
+                  name="id"
+                  fullWidth
+                  value={data.id}
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                  />
+                <TextField
+                  label="Name"
+                  name="name"
+                  size="medium"
+                  fullWidth
+                  defaultValue={data.name}
+                  onChange={handleInputChange}
+                  required
                 />
-              <TextField
-                label="Name"
-                size="medium"
-                fullWidth
-                defaultValue={data.name}
-              />
-              <TextField
-                label="E-mail"
-                fullWidth
-                defaultValue={data.email}
-              />
-              <Box display="flex" gap="50px" marginTop="20px">
-                <Box>
-                  <InputLabel>Gender</InputLabel>
-                  <NativeSelect
-                    defaultValue={data.gender}
-                    inputProps={{
-                      name: 'gender'
-                    }}
-                  >
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                  </NativeSelect>
-                </Box>
-                <Box>
-                  <InputLabel>Status</InputLabel>
-                  <NativeSelect
-                    defaultValue={data.status}
-                    inputProps={{
-                      name: 'status'
-                    }}
-                  >
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                  </NativeSelect>
-                </Box>
-              </Box>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={record.handleClose}>Cancel</Button>
-              <Button>Save</Button>
-            </DialogActions>
-          </>
-        ) : (
-          <>
-            <DialogTitle>Loading...</DialogTitle>
-          </>
-        )
-        }
-      </Dialog>
+                <TextField
+                  label="E-mail"
+                  name="email"
+                  fullWidth
+                  defaultValue={data.email}
+                  onChange={handleInputChange}
+                  type="email"
+                  required
+                />
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={record.handleClose}>Cancel</Button>
+                <Button onClick={handleSubmit}>Save</Button>
+              </DialogActions>
+            </>
+          ) : (
+            <>
+              <DialogTitle>Loading...</DialogTitle>
+            </>
+          )
+          }
+        </Dialog>
+      </Form>
     </>
   )
 }
