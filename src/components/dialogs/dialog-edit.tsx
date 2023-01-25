@@ -11,14 +11,14 @@ import { Form } from "react-admin";
 import { useUpdateUserMutation, useGetUserQuery, useAddUserMutation } from "../../providers/usersApi";
 
 const initialState = {
+  body: '',
+  category: '',
+  cover: '',
+  createdAt: '',
   id: 0,
-  name: '',
-  username: '',
-  email: '',
-  address: {
-    street: '',
-  },
-  phone: ''
+  isDraft: false,
+  title: '',
+  views: 0,
 };
 
 export const DialogEdit = (record: any) => {
@@ -53,6 +53,8 @@ export const DialogEdit = (record: any) => {
       await addUser(formValue);
       handleClose();
     } else {
+      console.log(formValue);
+      
       await updateUser(formValue);
       handleClose();
     }
@@ -84,7 +86,7 @@ export const DialogEdit = (record: any) => {
                   name="name"
                   size="medium"
                   fullWidth
-                  defaultValue={data.name}
+                  defaultValue={data.body}
                   onChange={handleInputChange}
                   required
                 />
@@ -92,10 +94,17 @@ export const DialogEdit = (record: any) => {
                   label="E-mail"
                   name="email"
                   fullWidth
-                  defaultValue={data.email}
+                  defaultValue={data.category}
                   onChange={handleInputChange}
                   type="email"
                   required
+                />
+                <TextField
+                  label="Title"
+                  name="title"
+                  fullWidth
+                  defaultValue={data.title}
+                  onChange={handleInputChange}
                 />
               </DialogContent>
               <DialogActions>

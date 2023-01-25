@@ -1,46 +1,36 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { Users } from './../components/users/users';
+import { Posts } from './../components/users/users';
 
 export const UsersApi = createApi({
   reducerPath: 'usersApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'https://mockend.com/org/repo'
+    baseUrl: 'https://mockend.com/KaLucas/react-admin-test'
   }),
-  tagTypes: ['Users'],
+  tagTypes: ['Posts'],
   endpoints: (builder) => ({
-    getUsers: builder.query<Users[], void>({
-      query: () => '/users',
-      providesTags: ['Users'],
+    getUsers: builder.query<Posts[], void>({
+      query: () => '/posts',
+      providesTags: ['Posts'],
     }),
-    getUser: builder.query<Users, string>({
-      query: (id) => `/users/${id}`,
-      providesTags: ['Users'],
+    getUser: builder.query<Posts, string>({
+      query: (id) => `/posts/${id}`,
+      providesTags: ['Posts'],
     }),
-    addUser: builder.mutation<{}, Users>({
+    addUser: builder.mutation<{}, Posts>({
       query: (body) => ({
-        url: `/users`,
+        url: `/posts`,
         method: 'POST',
-        body,
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'Authentication': 'Bearer 7445f34de3e5b0c9a2419f4aa29b8775411a7fd70ece1366d4abb79a9f15550d'
-        }
+        body
       }),
-      invalidatesTags: ['Users']
+      invalidatesTags: ['Posts']
     }),
     updateUser: builder.mutation({
       query: ({id, ...body}) => ({
-        url: `/users/${id}`,
+        url: `/posts/${id}`,
         method: 'PUT',
-        body,
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer 7445f34de3e5b0c9a2419f4aa29b8775411a7fd70ece1366d4abb79a9f15550d'
-        }
+        body
       }),
-      invalidatesTags: ['Users']
+      invalidatesTags: ['Posts']
     })
   })
 });

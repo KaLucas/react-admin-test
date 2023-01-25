@@ -5,28 +5,33 @@ import { useEffect, useState } from "react";
 import { DialogEdit } from "../dialogs/dialog-edit";
 import { DialogDelete } from "../dialogs/dialog-delete";
 
-export interface Users {
+export interface Posts {
+  body: string;
+  category: string;
+  cover: string;
+  createdAt: string;
   id: number;
-  name: string;
-  username: string;
-  email: string;
-  address: {
-    street: string;
-  };
-  phone: string;
+  isDraft: boolean;
+  title: string;
+  views: number;
 }
 
 export const UserList = () => {
-  const { data: users = [], isLoading } = useGetUsersQuery(undefined, {refetchOnMountOrArgChange: true});
+  const { data: users = [], isLoading, error } = useGetUsersQuery(undefined, {refetchOnMountOrArgChange: true});
   console.log(users);
   
-  const [page, setPage] = useState(1)
   const [openEdit, setOpenEdit] = useState(false);    
   const [openDelete, setOpenDelete] = useState(false);
   const [userId, setUserId] = useState() as any;
 
+  useEffect(() => {
+    if (error) {
+      <h3>ERROR!!</h3>;
+    }
+  }, [error]);
+
   if (isLoading) {
-    return <h3>Loading...</h3>
+    return <h3>Loading...</h3>;
   }
 
   const handleEditOpen = (userId: any) => (e: any) => {
@@ -52,20 +57,20 @@ export const UserList = () => {
         <Table aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Username</TableCell>
-              <TableCell>E-mail</TableCell>
-              <TableCell>Phone</TableCell>
+              <TableCell>Body</TableCell>
+              <TableCell>Category</TableCell>
+              <TableCell>Cover</TableCell>
+              <TableCell>Title</TableCell>
               <TableCell align="center">Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-          {users.map((user: Users) => (
+          {users.map((user: Posts) => (
             <TableRow key={user.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-              <TableCell component="th" scope="row">{user.name}</TableCell>
-              <TableCell>{user.username}</TableCell>
-              <TableCell>{user.email}</TableCell>
-              <TableCell>{user.phone}</TableCell>
+              <TableCell component="th" scope="row" width="300px">{user.body}</TableCell>
+              <TableCell>{user.category}</TableCell>
+              <TableCell><img src={user.cover} alt="" width="80px" height="80px"/></TableCell>
+              <TableCell>{user.title}</TableCell>
               <TableCell align="center">
               <IconButton aria-label="add">
                 <Add />
@@ -82,7 +87,7 @@ export const UserList = () => {
           </TableBody>
         </Table>
       </TableContainer>
-      <DialogEdit open={openEdit} user={userId} handleClose={handleEditClose} />
+      <DialogEdit open={openEdit} handleClose={handleEditClose} />
       {/* <DialogDelete open={openDelete} handleClose={handleDeleteClose} /> */}
     </>
   );
