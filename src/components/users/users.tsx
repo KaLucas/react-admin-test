@@ -18,11 +18,9 @@ export interface Posts {
 
 export const UserList = () => {
   const { data: users = [], isLoading, error } = useGetUsersQuery(undefined, {refetchOnMountOrArgChange: true});
-  console.log(users);
-  
   const [openEdit, setOpenEdit] = useState(false);    
   const [openDelete, setOpenDelete] = useState(false);
-  const [userId, setUserId] = useState() as any;
+  const [id, setUserId] = useState() as any;
 
   useEffect(() => {
     if (error) {
@@ -34,9 +32,9 @@ export const UserList = () => {
     return <h3>Loading...</h3>;
   }
 
-  const handleEditOpen = (userId: any) => (e: any) => {
+  const handleEditOpen = (id?: any) => (e: any) => {
     setOpenEdit(true);
-    setUserId(userId);
+    setUserId(id);
   };
 
   const handleEditClose = () => {
@@ -72,7 +70,7 @@ export const UserList = () => {
               <TableCell><img src={user.cover} alt="" width="80px" height="80px"/></TableCell>
               <TableCell>{user.title}</TableCell>
               <TableCell align="center">
-              <IconButton aria-label="add">
+              <IconButton aria-label="add" onClick={handleEditOpen()}>
                 <Add />
               </IconButton>
               <IconButton aria-label="edit" onClick={handleEditOpen(user.id)}>
@@ -87,7 +85,7 @@ export const UserList = () => {
           </TableBody>
         </Table>
       </TableContainer>
-      <DialogEdit open={openEdit} handleClose={handleEditClose} />
+      <DialogEdit open={openEdit} id={id} handleClose={handleEditClose} />
       {/* <DialogDelete open={openDelete} handleClose={handleDeleteClose} /> */}
     </>
   );

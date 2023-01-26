@@ -22,13 +22,13 @@ const initialState = {
 };
 
 export const DialogEdit = (record: any) => {
-  const { data } = useGetUserQuery(record.user);
-  const id = data?.id;
   const [editMode, setEditMode] = useState(false);
   const [openEdit, setOpenEdit] = useState(false); 
   const [formValue, setFormValue] = useState(initialState);
   const [updateUser] = useUpdateUserMutation();
   const [addUser] = useAddUserMutation();
+  const { data, isFetching } = useGetUserQuery(record.id);
+  const id = data?.id;
 
   useEffect(() => {
     if (id) {
@@ -47,14 +47,11 @@ export const DialogEdit = (record: any) => {
     setFormValue({...formValue, [name]: value});
   }
 
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
+  const handleSubmit = async() => {
     if (!editMode) {
       await addUser(formValue);
       handleClose();
     } else {
-      console.log(formValue);
-      
       await updateUser(formValue);
       handleClose();
     }
@@ -67,8 +64,8 @@ export const DialogEdit = (record: any) => {
   return (
     <>
       <Form onSubmit={handleSubmit}>
-        <Dialog open={record.open} onClose={record.handleClose}>
-          {data?.id ? (
+        <Dialog open={record.open} onClose={handleClose}>
+          {id && !isFetching ? (
             <>
               <DialogTitle>Edit</DialogTitle>
               <DialogContent>
@@ -83,7 +80,7 @@ export const DialogEdit = (record: any) => {
                   />
                 <TextField
                   label="Name"
-                  name="name"
+                  name="body"
                   size="medium"
                   fullWidth
                   defaultValue={data.body}
@@ -92,7 +89,7 @@ export const DialogEdit = (record: any) => {
                 />
                 <TextField
                   label="E-mail"
-                  name="email"
+                  name="category"
                   fullWidth
                   defaultValue={data.category}
                   onChange={handleInputChange}
@@ -106,9 +103,12 @@ export const DialogEdit = (record: any) => {
                   defaultValue={data.title}
                   onChange={handleInputChange}
                 />
+                <div>
+                  <pre>{JSON.stringify(formValue, undefined, 2)}</pre>
+                </div>
               </DialogContent>
               <DialogActions>
-                <Button onClick={record.handleClose}>Cancel</Button>
+                <Button onClick={handleClose}>Cancel</Button>
                 <Button onClick={handleSubmit}>Save</Button>
               </DialogActions>
             </>
