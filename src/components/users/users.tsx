@@ -1,11 +1,11 @@
 import { IconButton, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper } from "@mui/material";
 import { useGetUsersQuery } from "../../providers/usersApi";
 import { Delete, Edit, Add } from '@mui/icons-material';
-import { useEffect, useState } from "react";
-import { DialogEdit } from "../dialogs/dialog-edit";
+import { useState } from "react";
 import { DialogDelete } from "../dialogs/dialog-delete";
+import DialogEdit from "../dialogs/dialog-edit";
 
-export interface Posts {
+export interface Users {
   body: string;
   category: string;
   cover: string;
@@ -21,13 +21,7 @@ export const UserList = () => {
   const [openEdit, setOpenEdit] = useState(false);    
   const [openDelete, setOpenDelete] = useState(false);
   const [id, setUserId] = useState() as any;
-
-  useEffect(() => {
-    if (error) {
-      <h3>ERROR!!</h3>;
-    }
-  }, [error]);
-
+  
   if (isLoading) {
     return <h3>Loading...</h3>;
   }
@@ -38,7 +32,7 @@ export const UserList = () => {
   };
 
   const handleEditClose = () => {
-    setOpenEdit(false);
+    setOpenEdit(false)
     setUserId('');
   };
   // const handleDeleteOpen = () => {
@@ -63,7 +57,7 @@ export const UserList = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-          {users.map((user: Posts) => (
+          {users.map((user: Users) => (
             <TableRow key={user.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
               <TableCell component="th" scope="row" width="300px">{user.body}</TableCell>
               <TableCell>{user.category}</TableCell>
@@ -85,8 +79,10 @@ export const UserList = () => {
           </TableBody>
         </Table>
       </TableContainer>
-      <DialogEdit open={openEdit} id={id} handleClose={handleEditClose} />
-      {/* <DialogDelete open={openDelete} handleClose={handleDeleteClose} /> */}
+      {openEdit && (
+        <DialogEdit open={openEdit} id={id} onClose={handleEditClose} />
+        )}
+        {/* <DialogDelete open={openDelete} handleClose={handleDeleteClose} /> */}
     </>
   );
 };

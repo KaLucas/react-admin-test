@@ -4,11 +4,13 @@ import {
   DialogContent,
   DialogActions,
   Button,
-  TextField
+  TextField,
+  Grid
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { Form } from "react-admin";
 import { useUpdateUserMutation, useGetUserQuery, useAddUserMutation } from "../../providers/usersApi";
+import { LoadingButton } from "@mui/lab";
 
 const initialState = {
   body: '',
@@ -21,14 +23,34 @@ const initialState = {
   views: 0,
 };
 
-export const DialogEdit = (record: any) => {
+const DialogEdit = (props: { open: boolean, onClose: any, id: number }) => {
+  const {open, onClose, id} = props;
   const [editMode, setEditMode] = useState(false);
-  const [openEdit, setOpenEdit] = useState(false); 
+  const [isLoading, setIsLoading] = useState(false); 
   const [formValue, setFormValue] = useState(initialState);
   const [updateUser] = useUpdateUserMutation();
   const [addUser] = useAddUserMutation();
-  const { data, isFetching } = useGetUserQuery(record.id);
-  const id = data?.id;
+  const { data, isFetching } = useGetUserQuery(id);
+
+  const categories = [
+    {
+      value: 'one',
+      label: 'One'
+    },
+    {
+      value: 'two',
+      label: 'Two',
+    },
+    {
+      value: 'three',
+      label: 'Three',
+    },
+    {
+      value: 'four',
+      label: 'Four',
+    },
+  ];
+  
 
   useEffect(() => {
     if (id) {
@@ -48,36 +70,59 @@ export const DialogEdit = (record: any) => {
   }
 
   const handleSubmit = async() => {
+    setIsLoading(true)
     if (!editMode) {
       await addUser(formValue);
-      handleClose();
+      onClose();
     } else {
       await updateUser(formValue);
-      handleClose();
+      onClose();
     }
   }
-
-  const handleClose = () => {
-    setOpenEdit(record.handleClose);
-  };
   
   return (
     <>
       <Form onSubmit={handleSubmit}>
-        <Dialog open={record.open} onClose={handleClose}>
+        <Dialog open={open} onClose={onClose} keepMounted>
           {id && !isFetching ? (
             <>
               <DialogTitle>Edit</DialogTitle>
               <DialogContent>
-                <TextField
-                  label="ID"
-                  name="id"
-                  fullWidth
-                  value={data.id}
-                  InputProps={{
-                    readOnly: true,
-                  }}
-                  />
+                <Grid container spacing={1}>
+                  <Grid item xs={8}>
+                    <TextField
+                      fullWidth
+                      label="ID"
+                      name="id"
+                      value={data.id}
+                      InputProps={{
+                        readOnly: true,
+                      }}
+                      margin="dense"
+                    />
+                  </Grid>
+                  <Grid item xs={4}>
+                    <TextField
+                      sx={{ p: 0 }}
+                      fullWidth
+                      name="category"
+                      select
+                      label="Category"
+                      defaultValue={data.category}
+                      SelectProps={{
+                        native: true,
+                      }}
+                      margin="dense"
+                      onChange={handleInputChange}
+                    >
+                      {categories.map((option: any) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </TextField>
+                  </Grid>
+                </Grid>
                 <TextField
                   label="Name"
                   name="body"
@@ -86,15 +131,7 @@ export const DialogEdit = (record: any) => {
                   defaultValue={data.body}
                   onChange={handleInputChange}
                   required
-                />
-                <TextField
-                  label="E-mail"
-                  name="category"
-                  fullWidth
-                  defaultValue={data.category}
-                  onChange={handleInputChange}
-                  type="email"
-                  required
+                  margin="dense"
                 />
                 <TextField
                   label="Title"
@@ -102,14 +139,16 @@ export const DialogEdit = (record: any) => {
                   fullWidth
                   defaultValue={data.title}
                   onChange={handleInputChange}
+                  margin="dense"
                 />
                 <div>
+                  <p><strong>Payload after input change</strong></p>
                   <pre>{JSON.stringify(formValue, undefined, 2)}</pre>
                 </div>
               </DialogContent>
               <DialogActions>
-                <Button onClick={handleClose}>Cancel</Button>
-                <Button onClick={handleSubmit}>Save</Button>
+                <Button variant="contained" color="secondary" onClick={onClose}>Cancel</Button>
+                <LoadingButton variant="contained" color="success" loading={isLoading} onClick={handleSubmit}>Save</LoadingButton>
               </DialogActions>
             </>
           ) : (
@@ -123,3 +162,5 @@ export const DialogEdit = (record: any) => {
     </>
   )
 }
+
+export default memo(DialogEdit)
