@@ -1,5 +1,5 @@
 import { Admin, CustomRoutes, Resource } from "react-admin";
-import { UserList } from "./components/users/users";
+import { PostsList } from "./components/posts/posts";
 import { CharactersList } from "./components/characters/characters-list";
 import PostIcon from "@mui/icons-material/Book";
 import { Dashboard } from "./components/dashboard/Dashboard";
@@ -12,7 +12,7 @@ const App = () => (
   <Admin authProvider={authProvider} dataProvider={dataProvider} dashboard={Dashboard} layout={CustomLayout}>
     <Resource name="characters" list={CharactersList} icon={PostIcon} />
     <CustomRoutes>
-      <Route path="/users" element={<UserList />} />
+      <Route path="/posts" element={<PostsList />} />
     </CustomRoutes>
   </Admin>
 );

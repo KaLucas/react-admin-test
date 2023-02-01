@@ -1,23 +1,23 @@
 import { IconButton, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper } from "@mui/material";
-import { useGetUsersQuery } from "../../providers/usersApi";
+import { useGetPostsQuery } from "../../providers/postsApi";
 import { Delete, Edit, Add } from '@mui/icons-material';
 import { useState } from "react";
 import { DialogDelete } from "../dialogs/dialog-delete";
 import DialogEdit from "../dialogs/dialog-edit";
 
-export interface Users {
+export interface Posts {
+  id?: number;
   body: string;
   category: string;
   cover: string;
   createdAt: string;
-  id: number;
   isDraft: boolean;
   title: string;
   views: number;
 }
 
-export const UserList = () => {
-  const { data: users = [], isLoading, error } = useGetUsersQuery(undefined, {refetchOnMountOrArgChange: true});
+export const PostsList = () => {
+  const { data: posts = [], isLoading } = useGetPostsQuery(undefined, {refetchOnMountOrArgChange: true}) || {};
   const [openEdit, setOpenEdit] = useState(false);    
   const [openDelete, setOpenDelete] = useState(false);
   const [id, setUserId] = useState() as any;
@@ -57,17 +57,17 @@ export const UserList = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-          {users.map((user: Users) => (
-            <TableRow key={user.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-              <TableCell component="th" scope="row" width="300px">{user.body}</TableCell>
-              <TableCell>{user.category}</TableCell>
-              <TableCell><img src={user.cover} alt="" width="80px" height="80px"/></TableCell>
-              <TableCell>{user.title}</TableCell>
+          {!isLoading && posts?.length > 0 && posts?.map((post: Posts) => (
+            <TableRow key={post.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+              <TableCell component="th" scope="row" width="300px">{post.body}</TableCell>
+              <TableCell>{post.category}</TableCell>
+              <TableCell><img src={post.cover} alt="" width="80px" height="80px"/></TableCell>
+              <TableCell>{post.title}</TableCell>
               <TableCell align="center">
               <IconButton aria-label="add" onClick={handleEditOpen()}>
                 <Add />
               </IconButton>
-              <IconButton aria-label="edit" onClick={handleEditOpen(user.id)}>
+              <IconButton aria-label="edit" onClick={handleEditOpen(post.id)}>
                 <Edit />
               </IconButton>
               <IconButton aria-label="delete">

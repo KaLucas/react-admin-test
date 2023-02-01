@@ -9,30 +9,36 @@ import {
 } from "@mui/material";
 import { memo, useEffect, useState } from "react";
 import { Form } from "react-admin";
-import { useUpdateUserMutation, useGetUserQuery, useAddUserMutation } from "../../providers/usersApi";
+import { useUpdatePostMutation, useGetPostQuery, useAddPostMutation } from "../../providers/postsApi";
 import { LoadingButton } from "@mui/lab";
+import { Posts } from "../posts/posts";
 
 const initialState = {
+  id: 0 || undefined,
   body: '',
   category: '',
   cover: '',
   createdAt: '',
-  id: 0,
   isDraft: false,
   title: '',
   views: 0,
 };
 
 const DialogEdit = (props: { open: boolean, onClose: any, id: number }) => {
+  
   const {open, onClose, id} = props;
+  const [formValue, setFormValue] = useState<Posts>(initialState);
   const [editMode, setEditMode] = useState(false);
   const [isLoading, setIsLoading] = useState(false); 
-  const [formValue, setFormValue] = useState(initialState);
-  const [updateUser] = useUpdateUserMutation();
-  const [addUser] = useAddUserMutation();
-  const { data, isFetching } = useGetUserQuery(id);
+  const [addPost] = useAddPostMutation() || {};
+  const [updatePost] = useUpdatePostMutation() || {};
+  const {data, isFetching} = useGetPostQuery(id);
 
   const categories = [
+    {
+      value: 'choose',
+      label: 'Category'
+    },
     {
       value: 'one',
       label: 'One'
@@ -51,7 +57,6 @@ const DialogEdit = (props: { open: boolean, onClose: any, id: number }) => {
     },
   ];
   
-
   useEffect(() => {
     if (id) {
       setEditMode(true);
@@ -72,35 +77,38 @@ const DialogEdit = (props: { open: boolean, onClose: any, id: number }) => {
   const handleSubmit = async() => {
     setIsLoading(true)
     if (!editMode) {
-      await addUser(formValue);
+      await addPost(formValue);
       onClose();
     } else {
-      await updateUser(formValue);
+      await updatePost(formValue);
       onClose();
     }
   }
-  
+
   return (
     <>
       <Form onSubmit={handleSubmit}>
         <Dialog open={open} onClose={onClose} keepMounted>
-          {id && !isFetching ? (
+          {!isFetching ? (
             <>
-              <DialogTitle>Edit</DialogTitle>
+              <DialogTitle>{editMode ? 'Edit' : 'Add'}</DialogTitle>
               <DialogContent>
                 <Grid container spacing={1}>
-                  <Grid item xs={8}>
-                    <TextField
-                      fullWidth
-                      label="ID"
-                      name="id"
-                      value={data.id}
-                      InputProps={{
-                        readOnly: true,
-                      }}
-                      margin="dense"
-                    />
-                  </Grid>
+                  {id && (
+                    <Grid item xs={8}>
+                      <TextField
+                        fullWidth
+                        label="ID"
+                        name="id"
+                        value={data?.id}
+                        InputProps={{
+                          readOnly: true,
+                        }}
+                        margin="dense"
+                      />
+                    </Grid>
+                    )
+                  }
                   <Grid item xs={4}>
                     <TextField
                       sx={{ p: 0 }}
@@ -108,12 +116,13 @@ const DialogEdit = (props: { open: boolean, onClose: any, id: number }) => {
                       name="category"
                       select
                       label="Category"
-                      defaultValue={data.category}
+                      defaultValue={editMode ? data?.category : 'choose'}
                       SelectProps={{
                         native: true,
                       }}
                       margin="dense"
                       onChange={handleInputChange}
+                      required
                     >
                       {categories.map((option: any) => (
                         <option key={option.value} value={option.value}>
@@ -124,11 +133,11 @@ const DialogEdit = (props: { open: boolean, onClose: any, id: number }) => {
                   </Grid>
                 </Grid>
                 <TextField
-                  label="Name"
+                  label="Body"
                   name="body"
                   size="medium"
                   fullWidth
-                  defaultValue={data.body}
+                  defaultValue={editMode ? data?.body : ''}
                   onChange={handleInputChange}
                   required
                   margin="dense"
@@ -137,9 +146,10 @@ const DialogEdit = (props: { open: boolean, onClose: any, id: number }) => {
                   label="Title"
                   name="title"
                   fullWidth
-                  defaultValue={data.title}
+                  defaultValue={editMode ? data?.title : ''}
                   onChange={handleInputChange}
                   margin="dense"
+                  required
                 />
                 <div>
                   <p><strong>Payload after input change</strong></p>

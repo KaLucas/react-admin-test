@@ -1,22 +1,22 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { Posts } from './../components/users/users';
+import { Posts } from '../components/posts/posts';
 
-export const UsersApi = createApi({
-  reducerPath: 'usersApi',
+export const PostsApi = createApi({
+  reducerPath: 'postsApi',
   baseQuery: fetchBaseQuery({
     baseUrl: 'https://mockend.com/KaLucas/react-admin-test'
   }),
   tagTypes: ['Posts'],
   endpoints: (builder) => ({
-    getUsers: builder.query<Posts[], void>({
+    getPosts: builder.query<Posts[], void>({
       query: () => '/posts',
       providesTags: ['Posts'],
     }),
-    getUser: builder.query<Posts, number>({
+    getPost: builder.query<Posts, number>({
       query: (id) => `/posts/${id}`,
       providesTags: ['Posts'],
     }),
-    addUser: builder.mutation<{}, Posts>({
+    addPost: builder.mutation<{}, Posts>({
       query: (body) => ({
         url: `/posts`,
         method: 'POST',
@@ -24,7 +24,7 @@ export const UsersApi = createApi({
       }),
       invalidatesTags: ['Posts']
     }),
-    updateUser: builder.mutation({
+    updatePost: builder.mutation({
       query: ({id, ...body}) => ({
         url: `/posts/${id}`,
         method: 'PUT',
@@ -35,4 +35,4 @@ export const UsersApi = createApi({
   })
 });
 
-export const { useGetUsersQuery, useUpdateUserMutation, useAddUserMutation, useGetUserQuery } = UsersApi;
+export const { useGetPostsQuery, useUpdatePostMutation, useAddPostMutation, useGetPostQuery } = PostsApi;

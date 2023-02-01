@@ -5,6 +5,6 @@ export const CustomMenu = (props: any) => (
   <Menu {...props}>
     <DashboardMenuItem />
     <MenuItemLink to="/characters" primaryText="Marvel Characters" leftIcon={<Gavel />}/>
-    <MenuItemLink to="/users" primaryText="Users" leftIcon={<PeopleAlt />}/>
+    <MenuItemLink to="/posts" primaryText="Posts" leftIcon={<PeopleAlt />}/>
   </Menu>
 )
