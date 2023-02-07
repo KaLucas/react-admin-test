@@ -1,4 +1,4 @@
-import { IconButton, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper } from "@mui/material";
+import { IconButton, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper, Box, Grid, Button } from "@mui/material";
 import { useGetPostsQuery } from "../../providers/postsApi";
 import { Delete, Edit, Add } from '@mui/icons-material';
 import { useState } from "react";
@@ -10,7 +10,7 @@ export interface Posts {
   body: string;
   category: string;
   cover: string;
-  createdAt: string;
+  createdAt: string | Date;
   isDraft: boolean;
   title: string;
   views: number;
@@ -21,6 +21,7 @@ export const PostsList = () => {
   const [openEdit, setOpenEdit] = useState(false);    
   const [openDelete, setOpenDelete] = useState(false);
   const [id, setUserId] = useState() as any;
+  const tableHeight =(window.innerHeight - 64 - 64 - 52 - 1) / window.innerHeight * 100;
   
   if (isLoading) {
     return <h3>Loading...</h3>;
@@ -45,13 +46,24 @@ export const PostsList = () => {
 
   return (
     <>
-      <TableContainer component={Paper}>
-        <Table aria-label="simple table">
+      <Box sx={{mb: 3}}>
+        <Grid container justifyContent="flex-end">
+          <Grid item>
+            <Box mt={2}>
+            <Button variant="outlined" startIcon={<Add />} onClick={handleEditOpen()}>
+              Add New
+            </Button>
+            </Box>
+          </Grid>
+        </Grid>
+      </Box>
+      <TableContainer component={Paper} sx={{ maxHeight: `${tableHeight}vh` }}>
+        <Table aria-label="table" stickyHeader>
           <TableHead>
             <TableRow>
               <TableCell>Body</TableCell>
-              <TableCell>Category</TableCell>
-              <TableCell>Cover</TableCell>
+              <TableCell size="small">Category</TableCell>
+              <TableCell align="center">Cover</TableCell>
               <TableCell>Title</TableCell>
               <TableCell align="center">Actions</TableCell>
             </TableRow>
@@ -61,12 +73,9 @@ export const PostsList = () => {
             <TableRow key={post.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
               <TableCell component="th" scope="row" width="300px">{post.body}</TableCell>
               <TableCell>{post.category}</TableCell>
-              <TableCell><img src={post.cover} alt="" width="80px" height="80px"/></TableCell>
+              <TableCell align="center" size="small"><img src={post.cover} alt="Cover Image" width="300px"/></TableCell>
               <TableCell>{post.title}</TableCell>
               <TableCell align="center">
-              <IconButton aria-label="add" onClick={handleEditOpen()}>
-                <Add />
-              </IconButton>
               <IconButton aria-label="edit" onClick={handleEditOpen(post.id)}>
                 <Edit />
               </IconButton>

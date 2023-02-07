@@ -4,11 +4,10 @@ import {
   DialogContent,
   DialogActions,
   Button,
-  TextField,
   Grid
 } from "@mui/material";
 import { memo, useEffect, useState } from "react";
-import { Form } from "react-admin";
+import { Form, TextInput, SelectInput, ImageField, ImageInput } from "react-admin";
 import { useUpdatePostMutation, useGetPostQuery, useAddPostMutation } from "../../providers/postsApi";
 import { LoadingButton } from "@mui/lab";
 import { Posts } from "../posts/posts";
@@ -18,11 +17,11 @@ const initialState = {
   body: '',
   category: '',
   cover: '',
-  createdAt: '',
+  createdAt: new Date().toISOString(),
   isDraft: false,
   title: '',
-  views: 0,
-};
+  views: 0
+}
 
 const DialogEdit = (props: { open: boolean, onClose: any, id: number }) => {
   
@@ -33,30 +32,8 @@ const DialogEdit = (props: { open: boolean, onClose: any, id: number }) => {
   const [addPost] = useAddPostMutation() || {};
   const [updatePost] = useUpdatePostMutation() || {};
   const {data, isFetching} = useGetPostQuery(id);
+  const [preview, setPreview] = useState<string | undefined>()
 
-  const categories = [
-    {
-      value: 'choose',
-      label: 'Category'
-    },
-    {
-      value: 'one',
-      label: 'One'
-    },
-    {
-      value: 'two',
-      label: 'Two',
-    },
-    {
-      value: 'three',
-      label: 'Three',
-    },
-    {
-      value: 'four',
-      label: 'Four',
-    },
-  ];
-  
   useEffect(() => {
     if (id) {
       setEditMode(true);
@@ -70,10 +47,22 @@ const DialogEdit = (props: { open: boolean, onClose: any, id: number }) => {
   }, [id, data]);
 
   const handleInputChange = (e: any) => {
-    let { name, value } = e.target;
+    const { target } = e;
+    let name = '';
+    let value = '';
+
+    if (target === undefined) {
+      const objectUrl = URL.createObjectURL(e)
+      setPreview(objectUrl)
+      name = 'cover';
+      value = e.name;
+    } else {
+      name = target.name;
+      value = target.value;
+    }
     setFormValue({...formValue, [name]: value});
   }
-
+  
   const handleSubmit = async() => {
     setIsLoading(true)
     if (!editMode) {
@@ -87,70 +76,63 @@ const DialogEdit = (props: { open: boolean, onClose: any, id: number }) => {
 
   return (
     <>
-      <Form onSubmit={handleSubmit}>
+      <Form onSubmit={handleSubmit} noValidate>
         <Dialog open={open} onClose={onClose} keepMounted>
           {!isFetching ? (
             <>
               <DialogTitle>{editMode ? 'Edit' : 'Add'}</DialogTitle>
               <DialogContent>
+                {id ? (
+                  <ImageField record={data} source="cover" sx={{ '& .RaImageField-image': { width: '100%' } }} />
+                  ) : (
+                    <>
+                      <ImageInput 
+                      source="data"
+                      label="Related pictures"
+                      accept="image/*"
+                      onChange={handleInputChange}>
+                        <img src={preview} alt='Preview Image' width='100%' />
+                      </ImageInput>
+                    </>
+                  )
+                }
                 <Grid container spacing={1}>
                   {id && (
                     <Grid item xs={8}>
-                      <TextField
+                      <TextInput
                         fullWidth
                         label="ID"
                         name="id"
-                        value={data?.id}
+                        source="id"
+                        defaultValue={data?.id}
                         InputProps={{
                           readOnly: true,
                         }}
-                        margin="dense"
                       />
                     </Grid>
                     )
                   }
                   <Grid item xs={4}>
-                    <TextField
-                      sx={{ p: 0 }}
+                    <SelectInput 
                       fullWidth
                       name="category"
                       select
                       label="Category"
-                      defaultValue={editMode ? data?.category : 'choose'}
-                      SelectProps={{
-                        native: true,
-                      }}
-                      margin="dense"
+                      source="category"
+                      defaultValue={data?.category}
                       onChange={handleInputChange}
                       required
-                    >
-                      {categories.map((option: any) => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </TextField>
+                      choices={[
+                        {id: 'one', name: 'One'},
+                        {id: 'two', name: 'Two'},
+                        {id: 'three', name: 'Three'},
+                        {id: 'four', name: 'Four'}
+                      ]}
+                    />
                   </Grid>
                 </Grid>
-                <TextField
-                  label="Body"
-                  name="body"
-                  size="medium"
-                  fullWidth
-                  defaultValue={editMode ? data?.body : ''}
-                  onChange={handleInputChange}
-                  required
-                  margin="dense"
-                />
-                <TextField
-                  label="Title"
-                  name="title"
-                  fullWidth
-                  defaultValue={editMode ? data?.title : ''}
-                  onChange={handleInputChange}
-                  margin="dense"
-                  required
-                />
+                <TextInput label="Body" name="body" source="body" defaultValue={data?.body} fullWidth multiline required onChange={handleInputChange} resettable />
+                <TextInput label="Title" name="title" source="title" defaultValue={data?.title} fullWidth multiline required onChange={handleInputChange} resettable />
                 <div>
                   <p><strong>Payload after input change</strong></p>
                   <pre>{JSON.stringify(formValue, undefined, 2)}</pre>
