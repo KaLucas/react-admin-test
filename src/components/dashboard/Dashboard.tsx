@@ -1,8 +1,42 @@
-import { Card, CardContent, CardHeader } from "@mui/material";
+import { Card, CardContent, CardHeader, Grid, Typography } from "@mui/material";
+import { ImageField } from "react-admin";
 
 export const Dashboard = () => (
   <Card>
-    <CardHeader title="Welcome to the administration" />
-    <CardContent>Lorem ipsum sic dolor amet...</CardContent>
+    <CardHeader title="Hi and welcome!" align="center" />
+    <CardContent>
+      <Grid container justifyContent="center">
+        <img
+          src="https://media.tenor.com/mhLPO2VldCkAAAAC/0001.gif"
+          width="300px"
+        />
+      </Grid>
+      <Typography sx={{ mt: 10 }}>
+        Welcome to my testing Dashboard! Here you'll be able to see a little bit
+        of my learning about{" "}
+        <Typography fontWeight="bold" display="inline">
+          React-Admin, Data Provider and RTK Query
+        </Typography>
+        .
+      </Typography>
+      <Typography component="p" sx={{ mt: 2 }}>
+        At the{" "}
+        <Typography fontWeight="bold" display="inline">
+          Marvel Characters
+        </Typography>{" "}
+        menu, I'm using Data Provider only to fetch results and show the details
+      </Typography>
+      <Typography component="p" sx={{ mt: 2 }}>
+        At the{" "}
+        <Typography fontWeight="bold" display="inline">
+          Random Posts
+        </Typography>{" "}
+        menu, I'm using RTK Query with all the CRUD possibilities
+      </Typography>
+      <Typography component="p" sx={{ mt: 2 }}>
+        Enjoy and thank you for checking it out!
+      </Typography>
+      <Typography component="p">Karina</Typography>
+    </CardContent>
   </Card>
 );
