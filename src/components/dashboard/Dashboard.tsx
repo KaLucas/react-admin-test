@@ -14,7 +14,7 @@ export const Dashboard = () => (
         Welcome to my Dashboard! Here you'll be able to see a little bit of my
         learnings about{" "}
         <Typography fontWeight="bold" display="inline">
-          React-Admin, Data Provider and RTK Query
+          React-Admin, Material UI, Data Provider and RTK Query
         </Typography>
         .
       </Typography>
