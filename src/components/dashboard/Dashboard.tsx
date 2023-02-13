@@ -1,5 +1,4 @@
 import { Card, CardContent, CardHeader, Grid, Typography } from "@mui/material";
-import { ImageField } from "react-admin";
 
 export const Dashboard = () => (
   <Card>
@@ -13,7 +12,7 @@ export const Dashboard = () => (
       </Grid>
       <Typography sx={{ mt: 10 }}>
         Welcome to my testing Dashboard! Here you'll be able to see a little bit
-        of my learning about{" "}
+        of my learnings about{" "}
         <Typography fontWeight="bold" display="inline">
           React-Admin, Data Provider and RTK Query
         </Typography>
@@ -23,7 +22,7 @@ export const Dashboard = () => (
         At the{" "}
         <Typography fontWeight="bold" display="inline">
           Marvel Characters
-        </Typography>{" "}
+        </Typography>
         menu, I'm using Data Provider only to fetch results and show the details
       </Typography>
       <Typography component="p" sx={{ mt: 2 }}>
