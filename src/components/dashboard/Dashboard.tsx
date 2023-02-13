@@ -11,8 +11,8 @@ export const Dashboard = () => (
         />
       </Grid>
       <Typography sx={{ mt: 10 }}>
-        Welcome to my testing Dashboard! Here you'll be able to see a little bit
-        of my learnings about{" "}
+        Welcome to my Dashboard! Here you'll be able to see a little bit of my
+        learnings about{" "}
         <Typography fontWeight="bold" display="inline">
           React-Admin, Data Provider and RTK Query
         </Typography>
