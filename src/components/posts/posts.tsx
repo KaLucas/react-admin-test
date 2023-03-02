@@ -105,7 +105,7 @@ export const PostsList = () => {
                   <TableCell>{post.category}</TableCell>
                   <TableCell>{post.title}</TableCell>
                   <TableCell width="300px">{post.body}</TableCell>
-                  <TableCell align="center">
+                  <TableCell align="center" className="icon-button">
                     <IconButton
                       aria-label="edit"
                       onClick={handleEditOpen(post.id)}
